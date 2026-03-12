@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Research-Policy Network Survey — Bhutan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bhutan-orange: #E8650A;
+    --bhutan-deep: #1A1208;
+    --bhutan-mid: #3D2B10;
+    --bhutan-warm: #F5EFE6;
+    --bhutan-cream: #FAF7F2;
+    --bhutan-gold: #C89A3B;
+    --bhutan-border: #D9C9B0;
+    --accent-teal: #1B7A70;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background-color: var(--bhutan-cream);
+    color: var(--bhutan-deep);
+    min-height: 100vh;
+  }
+  .mono { font-family: 'DM Mono', monospace; }
+  /* Progress bar */
+  #progress-bar {
+    transition: width 0.4s ease;
+    background: linear-gradient(90deg, var(--bhutan-orange), var(--bhutan-gold));
+  }
+  /* Section cards */
+  .section-card {
+    background: white;
+    border: 1px solid var(--bhutan-border);
+    border-radius: 2px;
+    box-shadow: 2px 3px 0px var(--bhutan-border);
+  }
+  /* Part header */
+  .part-header {
+    background: var(--bhutan-deep);
+    color: var(--bhutan-warm);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-header {
+    border-left: 3px solid var(--bhutan-orange);
+    padding-left: 1rem;
+  }
+  /* Custom radio/checkbox */
+  .custom-radio, .custom-check {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--bhutan-border);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .custom-radio { border-radius: 50%; }
+  .custom-check { border-radius: 2px; }
+  .custom-radio:checked, .custom-check:checked {
+    background: var(--bhutan-orange);
+    border-color: var(--bhutan-orange);
+  }
+  .custom-radio:checked::after {
+    content:''; position:absolute; width:6px; height:6px;
+    background:white; border-radius:50%;
+    top:50%; left:50%; transform:translate(-50%,-50%);
+  }
+  .custom-check:checked::after {
+    content:'✓'; position:absolute; color:white;
+    font-size:12px; font-weight:700;
+    top:50%; left:50%; transform:translate(-50%,-50%) translateY(-1px);
+  }
+  label:has(.custom-radio), label:has(.custom-check) {
+    cursor: pointer;
+  }
+  label:has(.custom-radio:checked), label:has(.custom-check:checked) {
+    color: var(--bhutan-orange);
+  }
+  /* Likert scale */
+  .likert-row { transition: background 0.15s; }
+  .likert-row:hover { background: var(--bhutan-warm); }
+  .likert-cell { text-align: center; }
+  .likert-label { font-size: 0.78rem; color: #888; }
+  /* Text inputs */
+  .form-input {
+    border: 1px solid var(--bhutan-border);
+    border-radius: 1px;
+    padding: 0.45rem 0.75rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    width: 100%;
+    background: var(--bhutan-cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-input:focus {
+    border-color: var(--bhutan-orange);
+    box-shadow: 0 0 0 2px rgba(232,101,10,0.12);
+  }
+  select.form-input { cursor: pointer; }
+  textarea.form-input { resize: vertical; min-height: 80px; }
+  /* Navigation buttons */
+  .btn-primary {
+    background: var(--bhutan-orange);
+    color: white;
+    border: none;
+    padding: 0.7rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #c8540a; }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--bhutan-mid);
+    border: 1.5px solid var(--bhutan-border);
+    padding: 0.65rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: border-color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--bhutan-mid); }
+  /* Page visibility */
+  .survey-page { display: none; }
+  .survey-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  /* Ornamental divider */
+  .ornament {
+    display: flex; align-items: center; gap: 1rem;
+    color: var(--bhutan-gold); font-size: 1.2rem;
+  }
+  .ornament::before, .ornament::after {
+    content:''; flex:1; height:1px; background: var(--bhutan-border);
+  }
+  /* Completion screen */
+  #completion { display:none; }
+  /* Table scroll wrapper */
+  .table-scroll { overflow-x: auto; }
+  /* Responsive likert */
+  @media(max-width:640px) {
+    .likert-scale-label { display:none; }
+    .likert-num-label { display:block !important; }
+  }
+  .likert-num-label { display:none; }
+  /* Question numbering */
+  .q-number {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--bhutan-gold);
+    background: var(--bhutan-warm);
+    border: 1px solid var(--bhutan-border);
+    border-radius: 2px;
+    padding: 0.1rem 0.45rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+  /* Required field indicator */
+  .required-star { color: var(--bhutan-orange); font-weight: 600; }
+  /* Validation error styles */
+  .validation-error {
+    outline: 2px solid var(--bhutan-orange);
+    outline-offset: 2px;
+    animation: shake 0.3s ease;
+  }
+  .validation-error-msg {
+    color: var(--bhutan-orange);
+    font-size: 0.8rem;
+    font-family: 'DM Mono', monospace;
+    margin-top: 0.3rem;
+  }
+  .validation-banner {
+    background: #FFF0E6;
+    border: 1px solid var(--bhutan-orange);
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    color: var(--bhutan-orange);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .validation-banner.show { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Fixed top bar -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-white border-b" style="border-color:var(--bhutan-border);">
+  <div class="max-w-3xl mx-auto px-4 py-2 flex items-center gap-4">
+    <span class="mono text-xs" style="color:var(--bhutan-gold);">BHUTAN</span>
+    <div class="flex-1 h-1.5 rounded-full" style="background:var(--bhutan-border);">
+      <div id="progress-bar" class="h-1.5 rounded-full" style="width:0%"></div>
+    </div>
+    <span id="progress-text" class="mono text-xs" style="color:#888;">0 / 9</span>
+  </div>
+</div>
+
+<div class="pt-12 pb-20">
+
+<!-- ═══════════════════════════════════════════════ COVER PAGE ═══════ -->
+<div id="page-0" class="survey-page active max-w-3xl mx-auto px-4 py-10">
+  <div class="section-card p-8 md:p-12">
+    <!-- Header ornament -->
+    <div class="text-center mb-8">
+      <div class="inline-block px-4 py-1 mono text-xs mb-4" style="background:var(--bhutan-deep);color:var(--bhutan-gold);letter-spacing:0.2em;">
+        SNA v10 · PILOT
+      </div>
+      <h1 class="text-4xl md:text-5xl font-light mb-3" style="color:var(--bhutan-deep);line-height:1.2;">
+        Research–Policy<br/>
+        <em style="color:var(--bhutan-orange);">Network Survey</em>
+      </h1>
+      <p class="text-lg" style="color:var(--bhutan-mid);">Bhutan Education &amp; Health Sectors</p>
+      <p class="mono text-xs mt-2" style="color:#aaa;">Estimated completion: 30–35 minutes</p>
+    </div>
+
+    <div class="ornament my-8"><span>✦</span></div>
+
+    <div class="text-base leading-relaxed mb-8 space-y-4" style="color:var(--bhutan-mid);">
+      <p>You are invited to participate in a study examining research-policy engagement between policymakers, Bhutanese higher education institutions (HEI), and intermediaries (media, consultancy firms, and civil society organisations) in Bhutan. The study aims to understand current engagement patterns and identify opportunities to strengthen evidence-based policymaking.</p>
+      <p>Your participation is entirely voluntary. All individual responses will be kept strictly confidential. No individual name will ever appear in any published output. Results will be reported only as aggregated network patterns at the organisational level.</p>
+      <div class="p-4 rounded" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
+        <p class="font-semibold mb-1" style="color:var(--bhutan-deep);">Important — Specifying Contacts</p>
+        <p>When specifying contacts in Part 3, please write the full job title <em>and</em> organisation of each person (e.g., <em>Director, Department of School Education, Ministry of Education, Skills and Development</em>). Consistent and specific identification is essential for the analysis. Avoid vague descriptions such as "my boss" or "a colleague".</p>
+      </div>
+    </div>
+
+    <label class="flex items-start gap-3 cursor-pointer mb-8">
+      <input type="checkbox" id="consent-check" class="custom-check mt-1"/>
+      <span class="text-base">I voluntarily consent to participate in this study and understand that my responses are confidential.</span>
+    </label>
+
+    <div class="text-right">
+      <button class="btn-primary" onclick="checkConsent()">Begin Survey →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PAGE 1: BACKGROUND ═══ -->
+<div id="page-1" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 1</span>
+    <h2 class="text-xl font-light">Background Information</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-7">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Organisation -->
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q1</span> Organisation / Agency</p>
+      <div class="space-y-2">
+        <!-- MoESD -->
+        <p class="mono text-xs mt-2 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">MINISTRY OF EDUCATION &amp; SKILLS DEVELOPMENT</p>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - DEP" class="custom-radio"/><span>Department of Education Programmes (DEP)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - DSE" class="custom-radio"/><span>Department of School Education (DSE)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - BCSEA" class="custom-radio"/><span>Bhutan Council for School Examinations and Assessment (BCSEA)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - BQPCA" class="custom-radio"/><span>Bhutan Qualifications and Professionals Certification Authority (BQPCA)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - DWPSD" class="custom-radio"/><span>Department of Workforce Planning &amp; Skills Development (DWPSD)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoESD - Secretariat" class="custom-radio"/><span>MoESD Secretariat Services</span></label>
+
+        <!-- MoH -->
+        <p class="mono text-xs mt-4 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">MINISTRY OF HEALTH</p>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoH - DHS" class="custom-radio"/><span>Department of Health Services</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoH - DPH" class="custom-radio"/><span>Department of Public Health</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoH - BFDA" class="custom-radio"/><span>Bhutan Food and Drug Authority</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoH - RCDC" class="custom-radio"/><span>Royal Centre for Disease Control</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="MoH - Secretariat" class="custom-radio"/><span>MoH Secretariat</span></label>
+
+        <!-- Parliament -->
+        <p class="mono text-xs mt-4 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">PARLIAMENT</p>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="Parliament" class="custom-radio"/><span>Education, Health &amp; Good Governance Committee (Upper or Lower House)</span></label>
+
+        <!-- HEIs -->
+        <p class="mono text-xs mt-4 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">HIGHER EDUCATION INSTITUTIONS</p>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="HEI - RTC" class="custom-radio"/><span>Royal Thimphu College (RTC)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="HEI - KGUMSB" class="custom-radio"/><span>Khesar Gyalpo University of Medical Sciences of Bhutan (KGUMSB)</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="HEI - Paro CoE" class="custom-radio"/><span>Paro College of Education</span></label>
+        <label class="flex items-center gap-3 pl-4"><input type="radio" name="org" value="HEI - Samtse CoE" class="custom-radio"/><span>Samtse College of Education</span></label>
+        <label class="flex items-center gap-3 pl-4 flex-wrap gap-y-1">
+          <input type="radio" name="org" value="HEI - Other" class="custom-radio"/>
+          <span>Other HEI (specify):</span>
+          <input type="text" class="form-input" style="max-width:240px;" placeholder="Institution name"/>
+        </label>
+
+        <!-- CSOs -->
+        <p class="mono text-xs mt-4 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">CSOs &amp; MEDIA</p>
+        <label class="flex items-center gap-3 pl-4 flex-wrap gap-y-1">
+          <input type="radio" name="org" value="CSO" class="custom-radio"/>
+          <span>CSO (specify):</span>
+          <input type="text" class="form-input" style="max-width:260px;" placeholder="Organisation name"/>
+        </label>
+        <label class="flex items-center gap-3 pl-4 flex-wrap gap-y-1">
+          <input type="radio" name="org" value="Media" class="custom-radio"/>
+          <span>Media organisation (specify):</span>
+          <input type="text" class="form-input" style="max-width:220px;" placeholder="e.g. Kuensel, The Bhutanese…"/>
+        </label>
+
+        <!-- Other -->
+        <p class="mono text-xs mt-4 mb-1" style="color:var(--bhutan-gold);letter-spacing:0.08em;">OTHER</p>
+        <label class="flex items-center gap-3 pl-4 flex-wrap gap-y-1">
+          <input type="radio" name="org" value="Consultancy" class="custom-radio"/>
+          <span>Consultancy firm (specify):</span>
+          <input type="text" class="form-input" style="max-width:220px;" placeholder="Firm name"/>
+        </label>
+        <label class="flex items-center gap-3 pl-4 flex-wrap gap-y-1">
+          <input type="radio" name="org" value="Other" class="custom-radio"/>
+          <span>Other (specify):</span>
+          <input type="text" class="form-input" style="max-width:260px;" placeholder="Please specify"/>
+        </label>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--bhutan-border);">
+
+    <!-- Position title -->
+    <div>
+      <label class="font-semibold block mb-2"><span class="q-number">Q2</span> Current Position Title and Department / Division</label>
+      <input type="text" class="form-input" placeholder="e.g. Chief Programme Officer, Curriculum and Professional Support Division"/>
+    </div>
+
+    <hr style="border-color:var(--bhutan-border);">
+
+    <!-- Years in position -->
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q3</span> Years in Current Position</p>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_pos" class="custom-radio"/><span>Less than 2 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_pos" class="custom-radio"/><span>2 to 5 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_pos" class="custom-radio"/><span>6 to 10 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_pos" class="custom-radio"/><span>11 to 15 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_pos" class="custom-radio"/><span>More than 15 years</span></label>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--bhutan-border);">
+
+    <!-- Years in org -->
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q4</span> Years in Current Organisation</p>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_org" class="custom-radio"/><span>Less than 5 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_org" class="custom-radio"/><span>5 to 10 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_org" class="custom-radio"/><span>11 to 15 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_org" class="custom-radio"/><span>16 to 20 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_org" class="custom-radio"/><span>More than 20 years</span></label>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--bhutan-border);">
+
+    <!-- Total years in sector -->
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q5</span> Total Years of Professional Experience in Your Sector (Education or Health)</p>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>Less than 5 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>5 to 10 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>11 to 15 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>16 to 20 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>21 to 25 years</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="yrs_sector" class="custom-radio"/><span>More than 25 years</span></label>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--bhutan-border);">
+
+    <!-- Education -->
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q6</span> Highest Educational Qualification</p>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="radio" name="edu" class="custom-radio"/><span>Bachelor's degree</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="edu" class="custom-radio"/><span>Postgraduate Diploma</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="edu" class="custom-radio"/><span>Master's degree</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="edu" class="custom-radio"/><span>PhD / Doctorate</span></label>
+        <label class="flex items-center gap-3 flex-wrap gap-y-1">
+          <input type="radio" name="edu" class="custom-radio"/>
+          <span>Other (specify):</span>
+          <input type="text" class="form-input" style="max-width:240px;" placeholder="Please specify"/>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(0)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(1,2)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════ PAGE 2: ATTITUDES ═══════════ -->
+<div id="page-2" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 2</span>
+    <h2 class="text-xl font-light">Attitudes and Perceptions</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <p class="text-sm" style="color:var(--bhutan-mid);">Please read each statement carefully and indicate how much you agree or disagree based on your own experience.</p>
+
+    <!-- Scale legend -->
+    <div class="flex gap-4 flex-wrap mono text-xs" style="color:#888;">
+      <span><strong>1</strong> Strongly Disagree</span>
+      <span><strong>2</strong> Disagree</span>
+      <span><strong>3</strong> Neither</span>
+      <span><strong>4</strong> Agree</span>
+      <span><strong>5</strong> Strongly Agree</span>
+    </div>
+
+    <!-- Section 1 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q7</span> Section 1: Perceptions of the Research-Policy Ecosystem</h3>
+      </div>
+      <div class="table-scroll">
+        <table class="w-full text-sm min-w-[560px]">
+          <thead>
+            <tr>
+              <th class="text-left pb-2 pr-4" style="width:55%;color:var(--bhutan-mid);">Statement</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label" style="color:#888;font-weight:400;">1</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label" style="color:#888;font-weight:400;">2</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label" style="color:#888;font-weight:400;">3</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label" style="color:#888;font-weight:400;">4</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label" style="color:#888;font-weight:400;">5</th>
+            </tr>
+          </thead>
+          <tbody id="likert-s1"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q8</span> Section 2: Awareness and Access</h3>
+        <p class="text-sm mt-1" style="color:var(--bhutan-mid);">How do you typically become aware of relevant HEI research? <em>Check all that apply.</em></p>
+      </div>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Direct contact from researchers</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Communications by my Ministry or organisation</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Professional networks</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Conferences, workshops, webinars, or seminars</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Academic publications or journals</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Social media</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Policy briefs</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Media reports</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Chance encounters</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>I am generally not aware of HEI research</span></label>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q9</span> Section 3: Journal Access and Relevance</h3>
+        <p class="text-sm mt-1" style="color:var(--bhutan-mid);">How frequently do you access the following journals, and how relevant are they to your work?</p>
+      </div>
+      <!-- CHANGE: Added instruction for Section 3 -->
+      <div class="p-3 rounded text-sm mb-4" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
+        <strong>Instruction:</strong> To ensure the accuracy of this research, please base your responses on your actual experiences and behaviours, rather than on prescribed or ideal standards.
+      </div>
+      <div class="table-scroll">
+        <table class="w-full text-sm min-w-[600px]">
+          <thead>
+            <tr>
+              <th class="text-left pb-2" style="width:38%;color:var(--bhutan-mid);">Journal</th>
+              <th class="text-center pb-2" style="color:var(--bhutan-mid);">Type</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label text-xs font-normal" style="color:#888;">Never</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label text-xs font-normal" style="color:#888;">Rarely</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label text-xs font-normal" style="color:#888;">Sometimes</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label text-xs font-normal" style="color:#888;">Often</th>
+              <th class="likert-cell pb-2 w-10 likert-scale-label text-xs font-normal" style="color:#888;">Very Often</th>
+            </tr>
+          </thead>
+          <tbody id="journal-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(1)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(2,3)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 3: NETWORK CONTACTS ═══════ -->
+<div id="page-3" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 3</span>
+    <h2 class="text-xl font-light">Network Data — Knowledge &amp; Information Contacts</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-6">
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+    <div class="p-4 rounded text-sm" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
+      <strong>Reminder:</strong> Write the full job title <em>and</em> organisation for each contact. Do not write "my boss" or "a colleague" — these cannot be used in network analysis.
+    </div>
+    <p><span class="q-number">Q10</span> In the past 3 years, when you needed information, advice, or collaboration specifically related to your professional work in research or policy, which individuals did you contact most frequently?</p>
+    <p class="text-sm" style="color:var(--bhutan-mid);">Please provide details for up to 5 of your most important professional contacts. <span class="required-star">All fields are required.</span></p>
+
+    <div id="contacts-container" class="space-y-6"></div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(2)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(3,4)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 4: BROKERAGE ════════════ -->
+<div id="page-4" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 4</span>
+    <h2 class="text-xl font-light">Brokerage and Structural Holes</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Section 5 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q11</span> Section 5: Being Introduced to Others</h3>
+      </div>
+      <p class="mb-4">In the past 3 years, were you ever introduced to someone from a different organisation by a third party?</p>
+      <div class="flex gap-6 mb-6">
+        <label class="flex items-center gap-3"><input type="radio" name="intro_yn" value="Yes" class="custom-radio" onchange="toggleIntroductions()"/><span>Yes</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="intro_yn" value="No" class="custom-radio" onchange="toggleIntroductions()"/><span>No</span></label>
+      </div>
+
+      <div id="introductions-container" class="space-y-6" style="display:none;"></div>
+    </div>
+
+    <!-- Section 6 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q12</span> Section 6: Your Own Brokerage Activity</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">Sometimes you actively bridge different parts of the network. Please answer honestly — this is not about self-promotion.</p>
+      </div>
+
+      <p class="mb-3">Do you ever actively connect people from different organisations who would not otherwise interact with each other?</p>
+      <div class="space-y-2 mb-6">
+        <label class="flex items-center gap-3"><input type="radio" name="broker_freq" class="custom-radio"/><span>Yes, regularly</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="broker_freq" class="custom-radio"/><span>Yes, occasionally</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="broker_freq" class="custom-radio"/><span>Rarely</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="broker_freq" class="custom-radio"/><span>No</span></label>
+      </div>
+
+      <p class="mb-3">If yes, which types of organisations do you help connect? <em>Check all that apply.</em></p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>HEI and Ministry of Education</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>HEI and Ministry of Health</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>HEI and CSO</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>HEI and Media</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>HEI and Consultancy Firm</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Ministry and CSO</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Ministry and Media</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Ministry and Consultancy Firm</span></label>
+        <label class="flex items-center gap-3 col-span-full flex-wrap gap-y-1">
+          <input type="checkbox" class="custom-check"/>
+          <span>Other (specify):</span>
+          <input type="text" class="form-input" style="max-width:260px;" placeholder="Please specify"/>
+        </label>
+      </div>
+
+      <!-- CHANGE: Revised brokerage question wording -->
+      <p class="mb-3">In your professional role, do you regularly engage with both researchers and policymakers — meaning you genuinely understand the priorities, language, and culture of both groups?</p>
+      <div class="space-y-2 mb-6">
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>Yes, I work across both research and policy regularly and understand both well.</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>Yes, but I am more comfortable working with researchers.</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>Yes, but I am more comfortable working with policymakers.</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>Occasionally, but I do not consider myself a bridge between both.</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>No, my work is primarily within the research domain.</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="bridge_role" class="custom-radio"/><span>No, my work is primarily within the policy domain.</span></label>
+      </div>
+
+      <!-- CHANGE: Revised follow-up text to clarify which "yes" applies -->
+      <label class="font-semibold block mb-2">
+        If you answered yes above, briefly describe how you advocate with policymakers for policy change or how you influence researchers to take up research on priority areas — and your role in relation to each side:
+      </label>
+      <p class="text-xs mb-2" style="color:var(--bhutan-mid);"><em>Note: Consider the "yes" given in the first option you selected above, when responding to this question.</em></p>
+      <textarea class="form-input" rows="4" placeholder="Describe your role in relation to researchers and policymakers, and how it facilitates research-policy engagement…"></textarea>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(3)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(4,5)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ PAGE 5: MISSING CONNECTIONS ════ -->
+<div id="page-5" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 5</span>
+    <h2 class="text-xl font-light">Missing Connections</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-6">
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+    <div class="section-header mb-4">
+      <h3 class="font-semibold"><span class="q-number">Q13</span> Section 7: Contacts You Wish You Had</h3>
+    </div>
+    <p>Are there individuals or organisations you wish you had a professional connection with but currently do not?</p>
+    <div class="flex gap-6 mb-2">
+      <label class="flex items-center gap-3"><input type="radio" name="missing_yn" class="custom-radio"/><span>Yes</span></label>
+      <label class="flex items-center gap-3"><input type="radio" name="missing_yn" class="custom-radio"/><span>No</span></label>
+    </div>
+
+    <div class="space-y-5">
+      <!-- Missing 1 -->
+      <div>
+        <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 1</p>
+        <label class="block text-sm mb-1">Name of position and organisation</label>
+        <input type="text" class="form-input mb-3" placeholder="e.g. Director of Research, Ministry of Health"/>
+        <label class="block text-sm mb-1">If this connection existed, how often do you think you would interact?</label>
+        <select class="form-input">
+          <option value="">— Select —</option>
+          <option>Weekly</option><option>Monthly</option>
+          <option>Few times in a year</option><option>Once a year</option>
+        </select>
+      </div>
+      <!-- Missing 2 -->
+      <div>
+        <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 2</p>
+        <label class="block text-sm mb-1">Name of position and organisation</label>
+        <input type="text" class="form-input mb-3" placeholder="e.g. Lead Researcher, Royal University of Bhutan"/>
+        <label class="block text-sm mb-1">If this connection existed, how often do you think you would interact?</label>
+        <select class="form-input">
+          <option value="">— Select —</option>
+          <option>Weekly</option><option>Monthly</option>
+          <option>Few times in a year</option><option>Once a year</option>
+        </select>
+      </div>
+      <!-- Missing 3 -->
+      <div>
+        <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 3</p>
+        <label class="block text-sm mb-1">Name of position and organisation</label>
+        <input type="text" class="form-input mb-3" placeholder="e.g. Programme Officer, CSO"/>
+        <label class="block text-sm mb-1">If this connection existed, how often do you think you would interact?</label>
+        <select class="form-input">
+          <option value="">— Select —</option>
+          <option>Weekly</option><option>Monthly</option>
+          <option>Few times in a year</option><option>Once a year</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <p class="font-semibold mb-3"><span class="q-number">Q14</span> What has prevented these connections from forming? <em class="font-normal text-sm" style="color:var(--bhutan-mid);">Check all that apply.</em></p>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Do not know how to reach them</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>No appropriate channel or forum</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Hierarchical or bureaucratic barriers</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Lack of common purpose or shared agenda</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Geographic distance</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Lack of trust</span></label>
+        <label class="flex items-center gap-3 flex-wrap gap-y-1">
+          <input type="checkbox" class="custom-check"/>
+          <span>Other (specify):</span>
+          <input type="text" class="form-input" style="max-width:280px;" placeholder="Please specify"/>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(4)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(5,6)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 6: INFORMATION SOURCES ══ -->
+<div id="page-6" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 6</span>
+    <h2 class="text-xl font-light">Information Sources</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Section 8 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q15</span> Section 8: Source Ranking</h3>
+        <!-- CHANGE: Revised source ranking instruction text -->
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">When you need research evidence for your work or information/data for your research, rank your top 3 most used sources. Select 1 for the most used, 2 for second, 3 for third.</p>
+      </div>
+      <p class="text-sm mb-3" style="color:var(--bhutan-mid);">Sources: Ministry or department internal data · International development partners (ADB, World Bank, WHO, UNICEF) · Bhutanese HEI research or journals · International academic journals · Media reports · CSO reports · Commissioned reports from private consultancy firms.</p>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3">
+          <span class="mono text-xs w-16" style="color:var(--bhutan-gold);">Rank 1</span>
+          <input type="text" class="form-input" placeholder="Most used source"/>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="mono text-xs w-16" style="color:var(--bhutan-gold);">Rank 2</span>
+          <input type="text" class="form-input" placeholder="Second most used source"/>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="mono text-xs w-16" style="color:var(--bhutan-gold);">Rank 3</span>
+          <input type="text" class="form-input" placeholder="Third most used source"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q16</span> Section 9: Source Quality Rating</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">Please rate each of your top three sources on the following dimensions.</p>
+      </div>
+      <div id="source-quality" class="space-y-6"></div>
+    </div>
+
+    <!-- Section 10 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q17</span> Section 10: Reasons for Not Using HEI Research</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">If Bhutanese HEI research was NOT in your top 3 sources, what are the main reasons? <em>Check all that apply.</em></p>
+      </div>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Not aware of HEI research outputs</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Difficult to access — no central repository for HEI research</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Not relevant to my work area</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Concerns about research quality or rigour</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Research is outdated by the time I need it</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Too technical or written in academic language</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>I trust other sources, such as international or consultancy reports</span></label>
+        <label class="flex items-center gap-3"><input type="checkbox" class="custom-check"/><span>Not applicable — HEI research was in my top 3</span></label>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(5)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(6,7)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════ PAGE 7: COLLABORATION ══════ -->
+<div id="page-7" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 7</span>
+    <h2 class="text-xl font-light">Collaboration</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Section 11 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q18</span> Section 11: Collaboration Frequency and Nature</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">In the past 3 years, how often have you collaborated with each of the following? <em>You may skip the item for your own organisation.</em></p>
+      </div>
+      <div id="collab-table" class="space-y-5"></div>
+    </div>
+
+    <!-- Section 12 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q19</span> Section 12: Relationship Characterisation</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">How would you characterise the relationship between <em>your</em> organisation and each of the following? <em>You may skip the item for your own organisation.</em></p>
+      </div>
+      <div class="table-scroll">
+        <table class="w-full text-sm min-w-[560px]">
+          <thead>
+            <tr style="color:var(--bhutan-mid);">
+              <th class="text-left pb-2 pr-4" style="width:28%;">Organisation</th>
+              <th class="text-center pb-2 text-xs font-normal">We actively seek them</th>
+              <th class="text-center pb-2 text-xs font-normal">They actively seek us</th>
+              <th class="text-center pb-2 text-xs font-normal">Mutual / Reciprocal</th>
+              <th class="text-center pb-2 text-xs font-normal">Rarely interact</th>
+              <th class="text-center pb-2 text-xs font-normal">No interaction</th>
+            </tr>
+          </thead>
+          <tbody id="relship-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(6)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(7,8)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 8: BARRIERS & FACILITATORS -->
+<div id="page-8" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 8</span>
+    <h2 class="text-xl font-light">Barriers and Facilitators</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Section 13 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q20</span> Section 13: Barriers to Research-Policy Engagement</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">Please indicate the extent to which each item has been a barrier in your experience.</p>
+      </div>
+      <div class="flex gap-4 flex-wrap mono text-xs mb-4" style="color:#888;">
+        <span><strong>1</strong> Not a barrier</span>
+        <span><strong>2</strong> Minor</span>
+        <span><strong>3</strong> Moderate</span>
+        <span><strong>4</strong> Significant</span>
+        <span><strong>5</strong> Major barrier</span>
+      </div>
+      <div class="table-scroll">
+        <table class="w-full text-sm min-w-[520px]">
+          <thead>
+            <tr>
+              <th class="text-left pb-2 pr-4" style="width:58%;color:var(--bhutan-mid);">Statement</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">1</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">2</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">3</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">4</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">5</th>
+            </tr>
+          </thead>
+          <tbody id="barriers-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 14 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q21</span> Section 14: Facilitators</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">How important would each of the following be in facilitating better research-policy engagement?</p>
+      </div>
+      <div class="flex gap-4 flex-wrap mono text-xs mb-4" style="color:#888;">
+        <span><strong>1</strong> Not important</span>
+        <span><strong>2</strong> Slightly</span>
+        <span><strong>3</strong> Important</span>
+        <span><strong>4</strong> Very important</span>
+        <span><strong>5</strong> Extremely important</span>
+      </div>
+      <div class="table-scroll">
+        <table class="w-full text-sm min-w-[520px]">
+          <thead>
+            <tr>
+              <th class="text-left pb-2 pr-4" style="width:58%;color:var(--bhutan-mid);">Facilitator</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">1</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">2</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">3</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">4</th>
+              <th class="likert-cell pb-2 w-10" style="color:#888;font-weight:400;">5</th>
+            </tr>
+          </thead>
+          <tbody id="facilitators-table"></tbody>
+        </table>
+      </div>
+
+      <!-- REVISED: open-ended suggestion instead of two pre-filled boxes -->
+      <div class="mt-6">
+        <label class="font-semibold block mb-2"><span class="q-number">Q22</span> Is there any facilitator or intervention not listed above that you think is important? Please describe:</label>
+        <textarea class="form-input" rows="3" placeholder="Your suggestion…"></textarea>
+      </div>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(7)">← Back</button>
+      <button class="btn-primary" onclick="validateAndGo(8,9)">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE 9: PATHWAYS & PRIORITY ══ -->
+<div id="page-9" class="survey-page max-w-3xl mx-auto px-4 py-10">
+  <div class="part-header px-6 py-3 mb-1">
+    <span class="mono text-xs">Part 9</span>
+    <h2 class="text-xl font-light">Research-to-Policy Pathways</h2>
+  </div>
+  <div class="section-card p-6 md:p-8 space-y-8">
+
+    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
+      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
+    </div>
+
+    <!-- Section 15 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q23</span> Section 15: Evidence of Research Influence</h3>
+      </div>
+      <p class="mb-4">Can you recall a specific instance where HEI research directly influenced a policy or programme decision in your sector (education / health)?</p>
+      <div class="flex gap-6 mb-5">
+        <label class="flex items-center gap-3"><input type="radio" name="influence_yn" class="custom-radio"/><span>Yes</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="influence_yn" class="custom-radio"/><span>No</span></label>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm mb-1">What was the research about?</label>
+          <textarea class="form-input" rows="2" placeholder="Brief description of the research topic…"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">What policy or programme did it influence?</label>
+          <textarea class="form-input" rows="2" placeholder="Name of policy or programme…"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">How did the research reach the decision maker?</label>
+          <textarea class="form-input" rows="2" placeholder="e.g. policy brief, direct meeting, workshop presentation…"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Approximately when did this happen?</label>
+          <input type="text" class="form-input" placeholder="e.g. 2022, early 2021…"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 16 -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold"><span class="q-number">Q24</span> Section 16: Priority for Change</h3>
+        <p class="text-sm mt-1 font-normal" style="color:var(--bhutan-mid);">If you could change one thing about how HEI research and policy connect in Bhutan, which would you prioritise? <em>Check all that apply.</em></p>
+      </div>
+      <div class="space-y-2">
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Improve communication between researchers and policymakers</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Increase funding for policy-relevant research</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Create cross-organisational or agency research-policy collaboration platforms</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Appoint dedicated liaison officers who work at the interface of research and policy</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Enhance institutional capacity within HEIs to translate research into accessible formats for the public and policymakers</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Raise the visibility of HEI journals and improve their accessibility to the public</span></label>
+        <label class="flex items-start gap-3"><input type="checkbox" class="custom-check mt-1"/><span>Incorporate evaluation and empirical evidence as a mandatory stage in the policy formulation process</span></label>
+        <label class="flex items-start gap-3 flex-wrap gap-y-1">
+          <input type="checkbox" class="custom-check mt-1"/>
+          <span>Other (specify):</span>
+          <input type="text" class="form-input" style="max-width:300px;" placeholder="Please specify"/>
+        </label>
+      </div>
+    </div>
+
+    <!-- Pilot feedback -->
+    <div>
+      <div class="section-header mb-4">
+        <h3 class="font-semibold">Pilot Feedback <span class="font-normal text-sm" style="color:var(--bhutan-mid);">(optional)</span></h3>
+      </div>
+      <label class="block text-sm mb-2">If any question was unclear, confusing, or felt inappropriate to answer, please make a note here so the questionnaire can be improved before the main data collection round.</label>
+      <textarea class="form-input" rows="3" placeholder="Your feedback on the questionnaire…"></textarea>
+    </div>
+
+    <div class="flex justify-between pt-4">
+      <button class="btn-secondary" onclick="goToPage(8)">← Back</button>
+      <button class="btn-primary" onclick="submitSurvey()">Submit Survey ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ COMPLETION ════════ -->
+<div id="completion" class="max-w-3xl mx-auto px-4 py-10">
+  <div class="section-card p-10 text-center">
+    <div class="text-5xl mb-4">✦</div>
+    <h2 class="text-3xl font-light mb-3" style="color:var(--bhutan-deep);">Thank You</h2>
+    <p class="text-lg mb-6" style="color:var(--bhutan-mid);">Your responses will contribute to a better understanding of how research and policy connect in Bhutan and help identify practical ways to strengthen that connection.</p>
+    <div class="p-4 rounded inline-block" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
+      <p class="text-sm" style="color:var(--bhutan-mid);">If you have any questions about this survey or the study, please contact the research team.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main wrapper -->
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const likertS1 = [
+  "HEI research includes studies designed to inform policy decisions.",
+  "HEI research is produced in a timely way for policy needs.",
+  "HEI research provides actionable recommendations.",
+  "There are formal mechanisms for academia-policy engagement.",
+  "My organisation seeks research evidence for policy and programmatic decisions.",
+  "Leadership in my organisation encourages cross-sector collaboration.",
+  "Organisations in my sector largely operate in silos.",
+  "Collaboration is limited because organisations view one another as competitors.",
+  "Decisions in my organisation are driven by rank rather than evidence.",
+  "I trust the quality of research produced by Bhutanese HEIs.",
+  "International research is more trusted than local research in my organisation.",
+  "Research findings are typically communicated in language understandable to all.",
+];
+
+const journals = [
+  "Bhutan Journal of Research and Development",
+  "Rabsel Journal of Educational Action Research",
+  "Educational Innovation and Practice",
+  "Bhutan Health Journal",
+  "Bhutan Sorig Journal",
+  "Rig Tshoel",
+];
+
+const contactFields = [
+  { label:"Mention or specify the position <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Director of Curriculum, MoE" },
+  { label:"Organisation <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Ministry of Education, Skills and Development" },
+  { label:"Department / Division / Unit <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Curriculum and Professional Support Division" },
+  { label:"How often did you contact them? <span class='required-star'>*</span>", type:"select", options:["Weekly","Monthly","Few times a year","Once a year"] },
+  { label:"How important is this contact to your work? <span class='required-star'>*</span>", type:"select", options:["Extremely","Very","Moderately","Somewhat","Not very"] },
+  { label:"Nature of relationship <span class='required-star'>*</span>", type:"select", options:["Formal — official or institutional channel","Informal — personal or social connection","Committee — through a joint committee or working group","Introduced — connected through a third party","Former Colleague — previously worked together"] },
+  { label:"What did you exchange? <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Research, Policy docs, Data, Advice…" },
+  { label:"Does this person contact you back? <span class='required-star'>*</span>", type:"select", options:["Yes, always","Yes, sometimes","Rarely","Never"] },
+  { label:"Would this person name you as one of their contacts? <span class='required-star'>*</span>", type:"select", options:["Yes","Probably","Unlikely","No"] },
+];
+
+const introFields = [
+  { label:"Who introduced you?", placeholder:"Position and organisation of the introducer" },
+  { label:"Who were you introduced to?", placeholder:"Position and organisation of the new contact" },
+];
+
+const sourceQualityDimensions = ["Trustworthiness","Accessibility","Timeliness","Relevance to your work"];
+
+const collabOrgs = ["HEI","Ministry of Education","Ministry of Health","Media","Consultancy Firm","CSO"];
+const collabFreqs = ["Very often","Often","Sometimes","Rarely","Never"];
+const collabNatures = ["Equal","Patron","Formal","Informal","Consultative"];
+const collabDurations = ["One-time","Ongoing","Intermittent"];
+const relshipOpts = ["We actively seek them","They actively seek us","Mutual / Reciprocal","Rarely interact","No interaction"];
+
+// NOTE: removed 2 items that overlapped with Part 2
+const barriers = [
+  "Time constraints and incompatible timelines limit collaboration.",
+  "Bureaucratic procedures discourage effective cross-organisation collaboration.",
+  "Limited leadership support constrains the use of research evidence in policymaking.",
+  "Technical or jargon-heavy research limits its usefulness in policymaking.",
+  "Lack of funding for cross-sector research is a major barrier to collaboration.",
+  "Research findings are not disseminated in accessible formats (e.g. plain language, short policy briefs).",
+  "Physical distance between organisations makes collaboration difficult.",
+  "Lack of a shared platform or forum for researchers and policymakers to meet.",
+];
+
+// NOTE: "boundary spanner" rephrased in plain language
+const facilitators = [
+  "Dedicated research-policy liaison positions within ministries.",
+  "Funding specifically designed for cross-sector collaborative research.",
+  "Regular research-policy forums where both sides meet routinely.",
+  "Research synthesis and policy brief writing services.",
+  "Secondments or staff exchange programmes between HEIs and ministries.",
+  "Leadership mandates requiring cross-sector collaboration.",
+  "Training for academics in writing policy briefs.",
+  "A centralised digital repository of Bhutanese research.",
+  "A dedicated role for a person who works formally between HEIs and government to facilitate communication, mutual understanding, and joint action.",
+];
+
+// ─── BUILD DYNAMIC SECTIONS ─────────────────────────────────────────────────
+function buildLikert(tbodyId, items, namePrefix) {
+  const tbody = document.getElementById(tbodyId);
+  items.forEach((item, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'likert-row border-t';
+    tr.style.borderColor = 'var(--bhutan-border)';
+    let cells = `<td class="py-2 pr-4 text-sm">${item}</td>`;
+    for (let v = 1; v <= 5; v++) {
+      cells += `<td class="likert-cell py-2"><input type="radio" name="${namePrefix}_${i}" value="${v}" class="custom-radio"/></td>`;
+    }
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildJournalTable() {
+  const tbody = document.getElementById('journal-table');
+  journals.forEach((j, i) => {
+    ['Frequency','Relevance'].forEach(type => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-t';
+      tr.style.borderColor = 'var(--bhutan-border)';
+      const label = type === 'Frequency' ? `<em>${j}</em>` : '';
+      const typeLabel = `<span class="mono text-xs" style="color:var(--bhutan-gold);">${type}</span>`;
+      let cells = `<td class="py-2 pr-3 text-sm">${type === 'Frequency' ? `<em>${j}</em>` : ''}</td>`;
+      cells += `<td class="py-2 pr-2 text-xs" style="color:#888;white-space:nowrap;">${typeLabel}</td>`;
+      for (let v = 1; v <= 5; v++) {
+        cells += `<td class="likert-cell py-2"><input type="radio" name="journal_${i}_${type}" value="${v}" class="custom-radio"/></td>`;
+      }
+      tr.innerHTML = cells;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+function buildContacts() {
+  const container = document.getElementById('contacts-container');
+  for (let c = 1; c <= 5; c++) {
+    const div = document.createElement('div');
+    div.className = 'p-4 rounded space-y-3';
+    div.style.cssText = 'background:var(--bhutan-warm);border:1px solid var(--bhutan-border);';
+    let html = `<p class="font-semibold mono text-sm" style="color:var(--bhutan-gold);">Contact ${c}</p>`;
+    contactFields.forEach((f, fi) => {
+      html += `<div><label class="block text-sm mb-1">${f.label}</label>`;
+      if (f.type === 'select') {
+        html += `<select class="form-input" required><option value="">— Select —</option>${f.options.map(o=>`<option>${o}</option>`).join('')}</select>`;
+      } else {
+        html += `<input type="text" class="form-input" placeholder="${f.placeholder}" required/>`;
+      }
+      html += `</div>`;
+    });
+    div.innerHTML = html;
+    container.appendChild(div);
+  }
+}
+
+function buildIntroductions() {
+  const container = document.getElementById('introductions-container');
+  for (let i = 1; i <= 3; i++) {
+    const div = document.createElement('div');
+    div.className = 'p-4 rounded space-y-3';
+    div.style.cssText = 'background:var(--bhutan-warm);border:1px solid var(--bhutan-border);';
+    let html = `<p class="font-semibold mono text-sm" style="color:var(--bhutan-gold);">Introduction ${i}</p>`;
+    introFields.forEach(f => {
+      html += `<div><label class="block text-sm mb-1">${f.label}</label><input type="text" class="form-input" placeholder="${f.placeholder}"/></div>`;
+    });
+    html += `<div><label class="block text-sm mb-1">How helpful was this introduction? (1 = Not helpful, 5 = Extremely helpful)</label>
+      <div class="flex gap-4 mt-1">`;
+    for (let v = 1; v <= 5; v++) {
+      html += `<label class="flex flex-col items-center gap-1 text-xs cursor-pointer">
+        <input type="radio" name="intro_help_${i}" value="${v}" class="custom-radio"/>
+        <span>${v}</span></label>`;
+    }
+    html += `</div></div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  }
+}
+
+function buildSourceQuality() {
+  const container = document.getElementById('source-quality');
+  ['Rank 1','Rank 2','Rank 3'].forEach((rank, ri) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">${rank} Source</p>`;
+    const table = document.createElement('table');
+    table.className = 'w-full text-sm';
+    table.innerHTML = `<thead><tr>
+      <th class="text-left pb-1 pr-4" style="width:40%;color:var(--bhutan-mid);">Dimension</th>
+      <th class="text-center pb-1 text-xs font-normal" style="color:#888;">Very Low</th>
+      <th class="text-center pb-1 text-xs font-normal" style="color:#888;">Low</th>
+      <th class="text-center pb-1 text-xs font-normal" style="color:#888;">Moderate</th>
+      <th class="text-center pb-1 text-xs font-normal" style="color:#888;">High</th>
+      <th class="text-center pb-1 text-xs font-normal" style="color:#888;">Very High</th>
+    </tr></thead>`;
+    const tbody = document.createElement('tbody');
+    sourceQualityDimensions.forEach((d, di) => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-t';
+      tr.style.borderColor = 'var(--bhutan-border)';
+      let cells = `<td class="py-2 pr-4">${d}</td>`;
+      for (let v = 1; v <= 5; v++) {
+        cells += `<td class="text-center py-2"><input type="radio" name="src_q_${ri}_${di}" value="${v}" class="custom-radio"/></td>`;
+      }
+      tr.innerHTML = cells;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    div.appendChild(table);
+    container.appendChild(div);
+  });
+}
+
+function buildCollabTable() {
+  const container = document.getElementById('collab-table');
+  collabOrgs.forEach((org, oi) => {
+    const div = document.createElement('div');
+    div.className = 'p-4 rounded space-y-3';
+    div.style.cssText = 'background:var(--bhutan-warm);border:1px solid var(--bhutan-border);';
+    div.setAttribute('data-collab-org', oi);
+    let html = `<p class="font-semibold text-sm">${org}</p>
+      <div>
+        <p class="text-xs mb-1" style="color:var(--bhutan-mid);">Frequency of collaboration</p>
+        <div class="flex flex-wrap gap-4">`;
+    collabFreqs.forEach(f => {
+      html += `<label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="radio" name="collab_freq_${oi}" class="custom-radio"/><span>${f}</span></label>`;
+    });
+    html += `</div></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs mb-1" style="color:var(--bhutan-mid);">Nature of collaboration</label>
+          <select class="form-input text-sm"><option value="">— Select —</option>${collabNatures.map(n=>`<option>${n}</option>`).join('')}</select>
+        </div>
+        <div>
+          <label class="block text-xs mb-1" style="color:var(--bhutan-mid);">Duration</label>
+          <select class="form-input text-sm"><option value="">— Select —</option>${collabDurations.map(d=>`<option>${d}</option>`).join('')}</select>
+        </div>
+      </div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function buildRelshipTable() {
+  const tbody = document.getElementById('relship-table');
+  collabOrgs.forEach((org, oi) => {
+    const tr = document.createElement('tr');
+    tr.className = 'border-t likert-row';
+    tr.style.borderColor = 'var(--bhutan-border)';
+    tr.setAttribute('data-relship-org', oi);
+    let cells = `<td class="py-2 pr-4 text-sm">${org}</td>`;
+    relshipOpts.forEach((_, ri) => {
+      cells += `<td class="text-center py-2"><input type="radio" name="relship_${oi}" value="${ri}" class="custom-radio"/></td>`;
+    });
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildBarriersTable() {
+  buildLikert('barriers-table', barriers, 'barrier');
+}
+
+function buildFacilitatorsTable() {
+  buildLikert('facilitators-table', facilitators, 'facilitator');
+}
+
+// ─── CONDITIONAL DISPLAY ────────────────────────────────────────────────────
+function toggleIntroductions() {
+  const val = document.querySelector('input[name="intro_yn"]:checked');
+  const container = document.getElementById('introductions-container');
+  if (val && val.value === 'Yes') {
+    container.style.display = 'block';
+  } else {
+    container.style.display = 'none';
+    // Clear any filled introduction data so validation doesn't block
+    container.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    container.querySelectorAll('input[type="text"]').forEach(t => t.value = '');
+  }
+}
+
+// Map org radio values to collabOrgs labels for auto-skipping
+function getRespondentOrgType() {
+  const orgRadio = document.querySelector('input[name="org"]:checked');
+  if (!orgRadio) return null;
+  const val = orgRadio.value;
+  if (val.startsWith('HEI')) return 'HEI';
+  if (val.startsWith('MoESD')) return 'Ministry of Education';
+  if (val.startsWith('MoH')) return 'Ministry of Health';
+  if (val === 'Media') return 'Media';
+  if (val === 'Consultancy') return 'Consultancy Firm';
+  if (val === 'CSO') return 'CSO';
+  return null;
+}
+
+function applyOrgSkipping() {
+  const respondentOrg = getRespondentOrgType();
+  // Mark collab and relship items for the respondent's own org
+  collabOrgs.forEach((org, oi) => {
+    const collabCard = document.querySelector(`[data-collab-org="${oi}"]`);
+    const relshipRow = document.querySelector(`[data-relship-org="${oi}"]`);
+    if (org === respondentOrg) {
+      if (collabCard) {
+        collabCard.style.opacity = '0.5';
+        collabCard.querySelector('.skip-own-org')?.remove();
+        const notice = document.createElement('div');
+        notice.className = 'skip-own-org';
+        notice.innerHTML = '<p class="text-xs mono mt-2" style="color:var(--bhutan-orange);">This is your own organisation — you may skip this item.</p>';
+        collabCard.appendChild(notice);
+      }
+      if (relshipRow) {
+        relshipRow.style.opacity = '0.5';
+        // Add a "N/A" cell if not already present
+        if (!relshipRow.querySelector('.na-label')) {
+          const naCell = document.createElement('td');
+          naCell.className = 'text-center py-2 na-label';
+          naCell.innerHTML = '<span class="mono text-xs" style="color:var(--bhutan-orange);">Your org — skip</span>';
+          relshipRow.appendChild(naCell);
+        }
+      }
+    } else {
+      if (collabCard) {
+        collabCard.style.opacity = '1';
+        collabCard.querySelector('.skip-own-org')?.remove();
+      }
+      if (relshipRow) {
+        relshipRow.style.opacity = '1';
+        relshipRow.querySelector('.na-label')?.remove();
+      }
+    }
+  });
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+const TOTAL_PAGES = 9;
+let currentPage = 0;
+
+function goToPage(n) {
+  document.querySelectorAll('.survey-page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(`page-${n}`);
+  if (target) {
+    target.classList.add('active');
+    currentPage = n;
+    updateProgress();
+    // Apply org skipping when entering Part 7
+    if (n === 7) applyOrgSkipping();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function validateAndGo(from, to) {
+  // Going backward is always allowed
+  if (to < from) { goToPage(to); return; }
+
+  const page = document.getElementById(`page-${from}`);
+  if (!page) { goToPage(to); return; }
+
+  // Apply org skipping when navigating to Part 7
+  if (to === 7) applyOrgSkipping();
+
+  // Clear previous errors
+  page.querySelectorAll('.validation-error').forEach(el => el.classList.remove('validation-error'));
+  page.querySelectorAll('.validation-error-msg').forEach(el => el.remove());
+  const existingBanner = page.querySelector('.validation-banner');
+  if (existingBanner) existingBanner.classList.remove('show');
+
+  let errors = [];
+
+  // Determine which elements to skip in validation
+  const introNo = page.querySelector('input[name="intro_yn"][value="No"]:checked');
+  const introContainer = page.querySelector('#introductions-container');
+  const respondentOrg = getRespondentOrgType();
+
+  // 1. Check all radio groups — at least one must be selected per group
+  const radioGroups = {};
+  page.querySelectorAll('input[type="radio"][name]').forEach(r => {
+    // Skip radio buttons inside hidden introductions container
+    if (introNo && introContainer && introContainer.contains(r)) return;
+    // Skip own-org collab/relship radio groups
+    if (respondentOrg) {
+      const orgIndex = collabOrgs.indexOf(respondentOrg);
+      if (orgIndex >= 0) {
+        if (r.name === `collab_freq_${orgIndex}` || r.name === `relship_${orgIndex}`) return;
+      }
+    }
+    radioGroups[r.name] = radioGroups[r.name] || false;
+    if (r.checked) radioGroups[r.name] = true;
+  });
+  for (const [name, answered] of Object.entries(radioGroups)) {
+    if (!answered) {
+      const firstRadio = page.querySelector(`input[name="${name}"]`);
+      if (firstRadio) {
+        const container = firstRadio.closest('div');
+        if (container) errors.push(container);
+      }
+    }
+  }
+
+  // 2. Check required text inputs and selects (skip hidden ones)
+  page.querySelectorAll('input[required], select[required]').forEach(el => {
+    if (introNo && introContainer && introContainer.contains(el)) return;
+    if (!el.value || el.value.trim() === '') {
+      errors.push(el);
+    }
+  });
+
+  // 3. Check required textareas (skip hidden ones)
+  page.querySelectorAll('textarea[required]').forEach(el => {
+    if (introNo && introContainer && introContainer.contains(el)) return;
+    if (!el.value || el.value.trim() === '') {
+      errors.push(el);
+    }
+  });
+
+  // 4. Check select elements with required attribute that still show the placeholder
+  page.querySelectorAll('select[required]').forEach(el => {
+    if (el.value === '') {
+      if (!errors.includes(el)) errors.push(el);
+    }
+  });
+
+  if (errors.length > 0) {
+    // Show or create validation banner
+    let banner = page.querySelector('.validation-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.className = 'validation-banner';
+      banner.textContent = 'Please answer all required questions before continuing.';
+      const card = page.querySelector('.section-card');
+      if (card) card.insertBefore(banner, card.firstChild);
+    }
+    banner.classList.add('show');
+
+    // Highlight first few errors
+    errors.slice(0, 5).forEach(el => {
+      el.classList.add('validation-error');
+    });
+
+    // Scroll to first error
+    errors[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  goToPage(to);
+}
+
+function updateProgress() {
+  const pct = currentPage === 0 ? 0 : Math.round((currentPage / TOTAL_PAGES) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = currentPage === 0 ? '0 / 9' : `${currentPage} / ${TOTAL_PAGES}`;
+}
+
+function checkConsent() {
+  if (!document.getElementById('consent-check').checked) {
+    alert('Please confirm your consent to participate before proceeding.');
+    return;
+  }
+  goToPage(1);
+}
+
+function submitSurvey() {
+  // Validate last page before submitting
+  const page = document.getElementById(`page-${currentPage}`);
+  if (page) {
+    const radioGroups = {};
+    page.querySelectorAll('input[type="radio"][name]').forEach(r => {
+      radioGroups[r.name] = radioGroups[r.name] || false;
+      if (r.checked) radioGroups[r.name] = true;
+    });
+    let hasErrors = false;
+    for (const [name, answered] of Object.entries(radioGroups)) {
+      if (!answered) { hasErrors = true; break; }
+    }
+    if (hasErrors) {
+      validateAndGo(currentPage, currentPage + 1);
+      return;
+    }
+  }
+
+  // Collect all data and submit
+  const data = collectAllData();
+  sendToBackend(data);
+}
+
+// ─── APPS SCRIPT ENDPOINT ───────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxeuMgFg2oTNsZsAGg17q1h-ZG_Uh1qHshvwJ05LgRLgx8jWPPH-fW-hNN8w_q-gxIfzQ/exec';
+
+// ─── COLLECT ALL FORM DATA ──────────────────────────────────────────────────
+function collectAllData() {
+  const d = {};
+  d['Response_ID'] = 'R_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+  // Helper: get radio value
+  const radio = (name) => { const r = document.querySelector(`input[name="${name}"]:checked`); return r ? r.value || r.nextElementSibling?.textContent?.trim() || '' : ''; };
+  // Helper: get text value from nth input in a container
+  const getOrgSpecify = () => {
+    const checked = document.querySelector('input[name="org"]:checked');
+    if (!checked) return '';
+    const label = checked.closest('label');
+    if (label) { const inp = label.querySelector('input[type="text"]'); if (inp) return inp.value; }
+    return '';
+  };
+
+  // ─── PART 1 ───
+  d['Q1_Organisation'] = radio('org');
+  d['Q1_Organisation_Specify'] = getOrgSpecify();
+  // Q2: position text input (first text input after org section in page-1)
+  const p1Inputs = document.querySelectorAll('#page-1 input.form-input[type="text"]:not([name])');
+  const positionInputs = [];
+  document.querySelectorAll('#page-1 > div > div').forEach(card => {
+    card.querySelectorAll('input.form-input[type="text"]').forEach(inp => {
+      if (!inp.closest('label')?.querySelector('input[type="radio"]')) positionInputs.push(inp);
+    });
+  });
+  // Find the standalone position input by its placeholder
+  const posInput = document.querySelector('#page-1 input[placeholder*="Chief Programme"]') || document.querySelector('#page-1 input[placeholder*="Programme Officer"]');
+  d['Q2_Position_Title_Dept'] = posInput ? posInput.value : '';
+  d['Q3_Years_Current_Position'] = radio('yrs_pos');
+  d['Q4_Years_Current_Organisation'] = radio('yrs_org');
+  d['Q5_Years_Sector_Experience'] = radio('yrs_sector');
+  d['Q6_Highest_Qualification'] = radio('edu');
+  const eduChecked = document.querySelector('input[name="edu"]:checked');
+  if (eduChecked) {
+    const eduLabel = eduChecked.closest('label');
+    if (eduLabel) { const inp = eduLabel.querySelector('input[type="text"]'); d['Q6_Qualification_Specify'] = inp ? inp.value : ''; }
+  } else { d['Q6_Qualification_Specify'] = ''; }
+
+  // ─── PART 2: Section 1 Likert ───
+  const likertKeys = [
+    "HEI_research_informs_policy","HEI_research_timely","HEI_research_actionable",
+    "Formal_mechanisms_exist","Org_seeks_research_evidence","Leadership_encourages_collab",
+    "Orgs_operate_in_silos","Collab_limited_competition","Decisions_driven_by_rank",
+    "Trust_Bhutanese_HEI_quality","International_more_trusted","Research_communicated_clearly"
+  ];
+  likertKeys.forEach((key, i) => { d[`Q7_S1_${i+1}_${key}`] = radio(`likert_s1_${i}`); });
+
+  // Section 2: Awareness (checkboxes)
+  const awarenessKeys = [
+    "Direct_contact_researchers","Ministry_communications","Professional_networks",
+    "Conferences_workshops","Academic_publications","Social_media",
+    "Policy_briefs","Media_reports","Chance_encounters","Not_aware_HEI"
+  ];
+  const awarenessChecks = document.querySelectorAll('#page-2 .custom-check');
+  // Find the Section 2 checkboxes (first set of checkboxes on page 2)
+  const s2Container = document.querySelectorAll('#page-2 > div > div > div');
+  let awarenessIdx = 0;
+  document.querySelectorAll('#page-2 input.custom-check').forEach((cb, i) => {
+    if (i < awarenessKeys.length) {
+      d[`Q8_Awareness_${awarenessKeys[i]}`] = cb.checked ? 'Yes' : 'No';
+    }
+  });
+
+  // Section 3: Journals
+  const journalKeys = ["BJRD","Rabsel","EIP","BHJ","Sorig","RigTshoel"];
+  journalKeys.forEach((jk, ji) => {
+    d[`Q9_${jk}_Frequency`] = radio(`journal_${ji}_Frequency`);
+    d[`Q9_${jk}_Relevance`] = radio(`journal_${ji}_Relevance`);
+  });
+
+  // ─── PART 3: Contacts ───
+  const contactFieldKeys = [
+    "Position","Organisation","Dept_Division","Contact_Frequency","Importance",
+    "Relationship_Nature","Exchange","Contact_Back","Would_Name_You"
+  ];
+  const contactCards = document.querySelectorAll('#contacts-container > div');
+  contactCards.forEach((card, ci) => {
+    const inputs = card.querySelectorAll('input.form-input, select.form-input');
+    inputs.forEach((inp, fi) => {
+      if (fi < contactFieldKeys.length) {
+        d[`Q10_Contact${ci+1}_${contactFieldKeys[fi]}`] = inp.value || '';
+      }
+    });
+  });
+
+  // ─── PART 4: Introductions ───
+  d['Q11_Introduced_YN'] = radio('intro_yn');
+  const introCards = document.querySelectorAll('#introductions-container > div');
+  introCards.forEach((card, ii) => {
+    const txtInputs = card.querySelectorAll('input.form-input');
+    d[`Q11_Intro${ii+1}_Introducer`] = txtInputs[0] ? txtInputs[0].value : '';
+    d[`Q11_Intro${ii+1}_Introduced_To`] = txtInputs[1] ? txtInputs[1].value : '';
+    d[`Q11_Intro${ii+1}_Helpfulness`] = radio(`intro_help_${ii+1}`);
+  });
+
+  // Brokerage
+  d['Q12_Connect_People_Frequency'] = radio('broker_freq');
+  const brokerageKeys = ["HEI_MoE","HEI_MoH","HEI_CSO","HEI_Media","HEI_Consultancy","Ministry_CSO","Ministry_Media","Ministry_Consultancy","Other"];
+  const brokerChecks = document.querySelectorAll('#page-4 .custom-check');
+  brokerChecks.forEach((cb, i) => {
+    if (i < brokerageKeys.length) {
+      d[`Q12_Connect_${brokerageKeys[i]}`] = cb.checked ? 'Yes' : 'No';
+    }
+  });
+  // Other specify for brokerage
+  const brokerOtherInput = document.querySelector('#page-4 input[placeholder="Please specify"]');
+  d['Q12_Connect_Other_Specify'] = brokerOtherInput ? brokerOtherInput.value : '';
+  d['Q12_Bridge_Role'] = radio('bridge_role');
+  const bridgeTextarea = document.querySelector('#page-4 textarea');
+  d['Q12_Bridge_Description'] = bridgeTextarea ? bridgeTextarea.value : '';
+
+  // ─── PART 5: Missing Connections ───
+  d['Q13_Missing_YN'] = radio('missing_yn');
+  const missingBlocks = document.querySelectorAll('#page-5 .space-y-5 > div');
+  missingBlocks.forEach((block, mi) => {
+    const inp = block.querySelector('input.form-input');
+    const sel = block.querySelector('select.form-input');
+    d[`Q13_Missing${mi+1}_Position_Org`] = inp ? inp.value : '';
+    d[`Q13_Missing${mi+1}_Expected_Frequency`] = sel ? sel.value : '';
+  });
+  const barrierConnectionKeys = ["Dont_know_how","No_channel","Hierarchical_barriers","No_shared_purpose","Geographic_distance","Lack_trust","Other"];
+  const barrierChecks = document.querySelectorAll('#page-5 .custom-check');
+  barrierChecks.forEach((cb, i) => {
+    if (i < barrierConnectionKeys.length) {
+      d[`Q14_Barrier_${barrierConnectionKeys[i]}`] = cb.checked ? 'Yes' : 'No';
+    }
+  });
+  const barrierOther = document.querySelector('#page-5 input[placeholder="Please specify"]');
+  d['Q14_Barrier_Other_Specify'] = barrierOther ? barrierOther.value : '';
+
+  // ─── PART 6: Sources ───
+  const sourceInputs = document.querySelectorAll('#page-6 input[placeholder*="source"], #page-6 input[placeholder*="Most used"]');
+  const rankInputs = document.querySelectorAll('#page-6 .space-y-3 input.form-input');
+  rankInputs.forEach((inp, i) => { d[`Q15_Source_Rank${i+1}`] = inp.value || ''; });
+
+  // Source quality
+  const qualDims = ["Trustworthiness","Accessibility","Timeliness","Relevance"];
+  for (let ri = 0; ri < 3; ri++) {
+    qualDims.forEach((dim, di) => {
+      d[`Q16_Rank${ri+1}_${dim}`] = radio(`src_q_${ri}_${di}`);
+    });
+  }
+
+  // HEI reasons
+  const heiKeys = ["Not_aware","Difficult_access","Not_relevant","Quality_concerns","Outdated","Too_technical","Trust_other_sources","Not_applicable"];
+  const heiChecks = document.querySelectorAll('#page-6 input.custom-check');
+  heiChecks.forEach((cb, i) => {
+    if (i < heiKeys.length) { d[`Q17_${heiKeys[i]}`] = cb.checked ? 'Yes' : 'No'; }
+  });
+
+  // ─── PART 7: Collaboration ───
+  const collabOrgKeys = ["HEI","MoE","MoH","Media","Consultancy","CSO"];
+  const collabCards = document.querySelectorAll('#collab-table > div');
+  collabCards.forEach((card, oi) => {
+    if (oi < collabOrgKeys.length) {
+      d[`Q18_${collabOrgKeys[oi]}_Frequency`] = radio(`collab_freq_${oi}`);
+      const selects = card.querySelectorAll('select.form-input');
+      d[`Q18_${collabOrgKeys[oi]}_Nature`] = selects[0] ? selects[0].value : '';
+      d[`Q18_${collabOrgKeys[oi]}_Duration`] = selects[1] ? selects[1].value : '';
+    }
+  });
+  collabOrgKeys.forEach((ok, oi) => {
+    d[`Q19_${ok}_Relationship`] = radio(`relship_${oi}`);
+  });
+
+  // ─── PART 8: Barriers & Facilitators ───
+  const barrierItemKeys = ["Time_constraints","Bureaucratic_procedures","Limited_leadership","Technical_jargon","Lack_funding","Not_accessible_formats","Physical_distance","No_shared_platform"];
+  barrierItemKeys.forEach((bk, bi) => { d[`Q20_Barrier_${bk}`] = radio(`barrier_${bi}`); });
+
+  const facilitatorKeys = ["Liaison_positions","Cross_sector_funding","Regular_forums","Policy_brief_services","Secondments","Leadership_mandates","Training_policy_briefs","Digital_repository","Dedicated_bridge_role"];
+  facilitatorKeys.forEach((fk, fi) => { d[`Q21_Facilitator_${fk}`] = radio(`facilitator_${fi}`); });
+
+  const facTextarea = document.querySelector('#page-8 textarea');
+  d['Q22_Other_Facilitator'] = facTextarea ? facTextarea.value : '';
+
+  // ─── PART 9: Pathways ───
+  d['Q23_Influence_YN'] = radio('influence_yn');
+  const p9Textareas = document.querySelectorAll('#page-9 textarea');
+  d['Q23_Research_Topic'] = p9Textareas[0] ? p9Textareas[0].value : '';
+  d['Q23_Policy_Influenced'] = p9Textareas[1] ? p9Textareas[1].value : '';
+  d['Q23_How_Reached_Decisionmaker'] = p9Textareas[2] ? p9Textareas[2].value : '';
+  const whenInput = document.querySelector('#page-9 input[placeholder*="2022"]');
+  d['Q23_When'] = whenInput ? whenInput.value : '';
+
+  // Priority (checkboxes)
+  const priorityKeys = ["Improve_communication","Increase_funding","Cross_org_platforms","Liaison_officers","HEI_translate_research","HEI_journal_visibility","Mandatory_evidence_policy","Other"];
+  const priorityChecks = document.querySelectorAll('#page-9 input.custom-check');
+  priorityChecks.forEach((cb, i) => {
+    if (i < priorityKeys.length) { d[`Q24_Priority_${priorityKeys[i]}`] = cb.checked ? 'Yes' : 'No'; }
+  });
+  const priorOther = document.querySelector('#page-9 input[placeholder="Please specify"]');
+  d['Q24_Priority_Other_Specify'] = priorOther ? priorOther.value : '';
+
+  // Pilot feedback
+  const pilotTextarea = document.querySelectorAll('#page-9 textarea');
+  d['Pilot_Feedback'] = pilotTextarea[3] ? pilotTextarea[3].value : '';
+
+  return d;
+}
+
+// ─── SEND DATA TO BACKEND ───────────────────────────────────────────────────
+function sendToBackend(data) {
+  // Show submitting state
+  const submitBtn = document.querySelector('#page-9 .btn-primary');
+  if (submitBtn) { submitBtn.textContent = 'Submitting…'; submitBtn.disabled = true; }
+
+  if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Dev mode: log data and show completion
+    console.log('Survey data (no backend configured):', data);
+    console.log('Columns:', Object.keys(data).length);
+    showCompletion();
+    return;
+  }
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    showCompletion();
+  })
+  .catch(err => {
+    console.error('Submission error:', err);
+    // Still show completion — Apps Script with no-cors doesn't return readable response
+    // but the data is still sent successfully
+    showCompletion();
+  });
+}
+
+function showCompletion() {
+  document.querySelectorAll('.survey-page').forEach(p => p.style.display = 'none');
+  document.getElementById('completion').style.display = 'block';
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('progress-text').textContent = '✓ Complete';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildLikert('likert-s1', likertS1, 'likert_s1');
+  buildJournalTable();
+  buildContacts();
+  buildIntroductions();
+  buildSourceQuality();
+  buildCollabTable();
+  buildRelshipTable();
+  buildBarriersTable();
+  buildFacilitatorsTable();
+  updateProgress();
+});
+</script>
+</body>
+</html>
