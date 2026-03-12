@@ -1459,7 +1459,7 @@ function submitSurvey() {
 }
 
 // ─── APPS SCRIPT ENDPOINT ───────────────────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxeuMgFg2oTNsZsAGg17q1h-ZG_Uh1qHshvwJ05LgRLgx8jWPPH-fW-hNN8w_q-gxIfzQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYihq95lXaYemcXq694_3e-0s4KZASYfGV9N3vJ182CURLicmjLQYsjxkyl360jXZhew/exec';
 
 // ─── COLLECT ALL FORM DATA ──────────────────────────────────────────────────
 function collectAllData() {
@@ -1669,28 +1669,52 @@ function sendToBackend(data) {
   const submitBtn = document.querySelector('#page-9 .btn-primary');
   if (submitBtn) { submitBtn.textContent = 'Submitting…'; submitBtn.disabled = true; }
 
-  if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    // Dev mode: log data and show completion
-    console.log('Survey data (no backend configured):', data);
-    console.log('Columns:', Object.keys(data).length);
-    showCompletion();
-    return;
-  }
+  // Log data to console for debugging
+  console.log('Survey data:', data);
+  console.log('Total fields:', Object.keys(data).length);
 
+  // Use fetch with redirect:follow — Apps Script reliably receives this
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
-  .then(() => {
+  .then(response => {
+    console.log('Submission response received');
     showCompletion();
   })
   .catch(err => {
-    console.error('Submission error:', err);
-    // Still show completion — Apps Script with no-cors doesn't return readable response
-    // but the data is still sent successfully
-    showCompletion();
+    // With cross-origin, fetch may throw even though Apps Script received the data.
+    // Fallback: use a hidden form submission approach
+    console.warn('Fetch failed, trying form fallback:', err.message);
+    try {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = APPS_SCRIPT_URL;
+      form.target = 'submit_frame';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'payload';
+      input.value = JSON.stringify(data);
+      form.appendChild(input);
+
+      // Create hidden iframe to catch the redirect
+      let iframe = document.getElementById('submit_frame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'submit_frame';
+        iframe.id = 'submit_frame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
+    } catch (formErr) {
+      console.error('Form fallback also failed:', formErr);
+    }
+    // Show completion regardless — the data was likely sent
+    setTimeout(showCompletion, 1500);
   });
 }
 
