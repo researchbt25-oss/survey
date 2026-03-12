@@ -1466,8 +1466,19 @@ function collectAllData() {
   const d = {};
   d['Response_ID'] = 'R_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
 
-  // Helper: get radio value
-  const radio = (name) => { const r = document.querySelector(`input[name="${name}"]:checked`); return r ? r.value || r.nextElementSibling?.textContent?.trim() || '' : ''; };
+  // Helper: get radio value — handles radios with and without value attributes
+  const radio = (name) => {
+    const r = document.querySelector(`input[name="${name}"]:checked`);
+    if (!r) return '';
+    // If value is set and meaningful (not just default 'on'), use it
+    if (r.value && r.value !== 'on') return r.value;
+    // Otherwise, find the label text — check sibling span, parent label span, or closest label
+    const span = r.parentElement?.querySelector('span');
+    if (span) return span.textContent.trim();
+    const label = r.closest('label');
+    if (label) return label.textContent.trim();
+    return r.value;
+  };
   // Helper: get text value from nth input in a container
   const getOrgSpecify = () => {
     const checked = document.querySelector('input[name="org"]:checked');
@@ -1625,7 +1636,11 @@ function collectAllData() {
     }
   });
   collabOrgKeys.forEach((ok, oi) => {
-    d[`Q19_${ok}_Relationship`] = radio(`relship_${oi}`);
+    const relVal = radio(`relship_${oi}`);
+    // Map numeric values to text labels
+    const relLabels = ["We actively seek them","They actively seek us","Mutual / Reciprocal","Rarely interact","No interaction"];
+    const idx = parseInt(relVal);
+    d[`Q19_${ok}_Relationship`] = (!isNaN(idx) && idx >= 0 && idx < relLabels.length) ? relLabels[idx] : relVal;
   });
 
   // ─── PART 8: Barriers & Facilitators ───
