@@ -198,6 +198,40 @@
     25% { transform: translateX(-4px); }
     75% { transform: translateX(4px); }
   }
+  /* Debug panel */
+  #debug-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 999;
+    background: var(--accent-teal); color: white;
+    border: none; border-radius: 50%; width: 48px; height: 48px;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+  }
+  #debug-btn:hover { transform: scale(1.1); }
+  #debug-panel {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1000; background: rgba(0,0,0,0.7);
+  }
+  #debug-panel.show { display: flex; align-items: center; justify-content: center; }
+  #debug-content {
+    background: white; border-radius: 4px; width: 90%; max-width: 900px;
+    max-height: 85vh; overflow: auto; padding: 1.5rem;
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  #debug-content h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .debug-row { display: flex; border-bottom: 1px solid #eee; padding: 3px 0; }
+  .debug-col { width: 45%; padding: 2px 4px; word-break: break-all; }
+  .debug-val { width: 55%; padding: 2px 4px; word-break: break-all; }
+  .debug-empty { color: #ccc; }
+  .debug-has-data { color: var(--accent-teal); font-weight: 500; }
+  .debug-on-value { color: var(--bhutan-orange); font-weight: 700; }
+  .debug-stats { background: var(--bhutan-warm); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; }
+  .debug-filter { margin-bottom: 0.75rem; }
+  .debug-filter button { padding: 4px 12px; margin-right: 6px; font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; cursor: pointer; border: 1px solid var(--bhutan-border); border-radius: 2px; background: white; }
+  .debug-filter button.active { background: var(--accent-teal); color: white; border-color: var(--accent-teal); }
 </style>
 </head>
 <body>
@@ -221,7 +255,7 @@
     <!-- Header ornament -->
     <div class="text-center mb-8">
       <div class="inline-block px-4 py-1 mono text-xs mb-4" style="background:var(--bhutan-deep);color:var(--bhutan-gold);letter-spacing:0.2em;">
-        SNA v10 · PILOT
+        SNA v10
       </div>
       <h1 class="text-4xl md:text-5xl font-light mb-3" style="color:var(--bhutan-deep);line-height:1.2;">
         Research–Policy<br/>
@@ -234,8 +268,10 @@
     <div class="ornament my-8"><span>✦</span></div>
 
     <div class="text-base leading-relaxed mb-8 space-y-4" style="color:var(--bhutan-mid);">
-      <p>You are invited to participate in a study examining research-policy engagement between policymakers, Bhutanese higher education institutions (HEI), and intermediaries (media, consultancy firms, and civil society organisations) in Bhutan. The study aims to understand current engagement patterns and identify opportunities to strengthen evidence-based policymaking.</p>
-      <p>Your participation is entirely voluntary. All individual responses will be kept strictly confidential. No individual name will ever appear in any published output. Results will be reported only as aggregated network patterns at the organisational level.</p>
+      <p>We invite senior officers and above from the Ministry of Health, Ministry of Education and Skills Development, higher education institutions, and civil society organisations (excluding administrative, human resources, legal, and laboratory roles) to participate in this Royal University of Bhutan (RUB)-funded study on strengthening research-policy connections in Bhutan.</p>
+      <p>Effective policy making depends on evidence, yet the links between research and policy are often complex and underexplored. This study maps the engagement networks connecting policymakers, researchers, and intermediaries—such as civil society, media, and consultants—to understand how information flows, where collaboration thrives, and what barriers exist.</p>
+      <p>As a key member of this ecosystem, your insights will help reveal the relationships that drive evidence-based decision-making. Help us conduct quality research with your timely completion of this survey.</p>
+      <p>Participation is voluntary, with no right or wrong answers. All responses are strictly confidential; no individual names will appear in any published output, as the results will be reported only as aggregated network patterns.</p>
       <div class="p-4 rounded" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
         <p class="font-semibold mb-1" style="color:var(--bhutan-deep);">Important — Specifying Contacts</p>
         <p>When specifying contacts in Part 3, please write the full job title <em>and</em> organisation of each person (e.g., <em>Director, Department of School Education, Ministry of Education, Skills and Development</em>). Consistent and specific identification is essential for the analysis. Avoid vague descriptions such as "my boss" or "a colleague".</p>
@@ -513,16 +549,18 @@
     <h2 class="text-xl font-light">Network Data — Knowledge &amp; Information Contacts</h2>
   </div>
   <div class="section-card p-6 md:p-8 space-y-6">
-    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
-      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
-    </div>
     <div class="p-4 rounded text-sm" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
       <strong>Reminder:</strong> Write the full job title <em>and</em> organisation for each contact. Do not write "my boss" or "a colleague" — these cannot be used in network analysis.
     </div>
-    <p><span class="q-number">Q10</span> In the past 3 years, when you needed information, advice, or collaboration specifically related to your professional work in research or policy, which individuals did you contact most frequently?</p>
-    <p class="text-sm" style="color:var(--bhutan-mid);">Please provide details for up to 5 of your most important professional contacts. <span class="required-star">All fields are required.</span></p>
+    <p><span class="q-number">Q10</span> In the past 1 year, when you needed information, advice, or collaboration related to your work, which individual/s did you contact?</p>
+    <p class="text-sm mt-1" style="color:var(--bhutan-mid);"><strong>Note:</strong> List as many as you can name. In case you cannot recall any names to list out, please list any one or two reasons.</p>
 
     <div id="contacts-container" class="space-y-6"></div>
+
+    <div class="mt-4">
+      <label class="block text-sm mb-2 font-semibold">If you cannot recall any names, please list one or two reasons why:</label>
+      <textarea id="q10_reasons" class="form-input" rows="3" placeholder="Write your reasons here..."></textarea>
+    </div>
 
     <div class="flex justify-between pt-4">
       <button class="btn-secondary" onclick="goToPage(2)">← Back</button>
@@ -539,22 +577,24 @@
   </div>
   <div class="section-card p-6 md:p-8 space-y-8">
 
-    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
-      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
-    </div>
-
     <!-- Section 5 -->
     <div>
       <div class="section-header mb-4">
         <h3 class="font-semibold"><span class="q-number">Q11</span> Section 5: Being Introduced to Others</h3>
       </div>
-      <p class="mb-4">In the past 3 years, were you ever introduced to someone from a different organisation by a third party?</p>
+      <p class="mb-2">In the past 1 year, were you ever introduced to someone from a different organization by a third party for a potential collaboration?</p>
+      <p class="text-sm mt-1 mb-4" style="color:var(--bhutan-mid);"><strong>Note:</strong> List as many as you can name. In case you cannot recall any names to list out, please list any one or two reasons.</p>
       <div class="flex gap-6 mb-6">
         <label class="flex items-center gap-3"><input type="radio" name="intro_yn" value="Yes" class="custom-radio" onchange="toggleIntroductions()"/><span>Yes</span></label>
         <label class="flex items-center gap-3"><input type="radio" name="intro_yn" value="No" class="custom-radio" onchange="toggleIntroductions()"/><span>No</span></label>
       </div>
 
       <div id="introductions-container" class="space-y-6" style="display:none;"></div>
+
+      <div class="mt-4">
+        <label class="block text-sm mb-2 font-semibold">If you cannot recall any names, please list one or two reasons why:</label>
+        <textarea id="q11_reasons" class="form-input" rows="3" placeholder="Write your reasons here..."></textarea>
+      </div>
     </div>
 
     <!-- Section 6 -->
@@ -622,21 +662,19 @@
     <h2 class="text-xl font-light">Missing Connections</h2>
   </div>
   <div class="section-card p-6 md:p-8 space-y-6">
-    <div class="p-3 rounded text-sm" style="background:#FFF7ED;border:1px solid var(--bhutan-orange);border-left:3px solid var(--bhutan-orange);">
-      <strong style="color:var(--bhutan-orange);">Note:</strong> Completion of this section is required. You will not be able to move to the next page unless all mandatory questions in this section are answered.
-    </div>
     <div class="section-header mb-4">
       <h3 class="font-semibold"><span class="q-number">Q13</span> Section 7: Contacts You Wish You Had</h3>
     </div>
     <p>Are there individuals or organisations you wish you had a professional connection with but currently do not?</p>
+    <p class="text-sm mt-1 mb-2" style="color:var(--bhutan-mid);"><strong>Note:</strong> List as many as you can name.</p>
     <div class="flex gap-6 mb-2">
       <label class="flex items-center gap-3"><input type="radio" name="missing_yn" class="custom-radio"/><span>Yes</span></label>
       <label class="flex items-center gap-3"><input type="radio" name="missing_yn" class="custom-radio"/><span>No</span></label>
     </div>
 
-    <div class="space-y-5">
+    <div id="missing-connections-container" class="space-y-5">
       <!-- Missing 1 -->
-      <div>
+      <div class="missing-card p-4 rounded" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
         <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 1</p>
         <label class="block text-sm mb-1">Name of position and organisation</label>
         <input type="text" class="form-input mb-3" placeholder="e.g. Director of Research, Ministry of Health"/>
@@ -648,7 +686,7 @@
         </select>
       </div>
       <!-- Missing 2 -->
-      <div>
+      <div class="missing-card p-4 rounded" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
         <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 2</p>
         <label class="block text-sm mb-1">Name of position and organisation</label>
         <input type="text" class="form-input mb-3" placeholder="e.g. Lead Researcher, Royal University of Bhutan"/>
@@ -660,7 +698,7 @@
         </select>
       </div>
       <!-- Missing 3 -->
-      <div>
+      <div class="missing-card p-4 rounded" style="background:var(--bhutan-warm);border:1px solid var(--bhutan-border);">
         <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection 3</p>
         <label class="block text-sm mb-1">Name of position and organisation</label>
         <input type="text" class="form-input mb-3" placeholder="e.g. Programme Officer, CSO"/>
@@ -672,6 +710,8 @@
         </select>
       </div>
     </div>
+
+    <button type="button" class="btn-secondary" onclick="addMissingConnection()" style="margin-top:8px;">+ Add another missing connection</button>
 
     <div>
       <p class="font-semibold mb-3"><span class="q-number">Q14</span> What has prevented these connections from forming? <em class="font-normal text-sm" style="color:var(--bhutan-mid);">Check all that apply.</em></p>
@@ -997,6 +1037,12 @@
 
 </div><!-- end main wrapper -->
 
+<!-- Debug button and panel -->
+<button id="debug-btn" onclick="openDebugPanel()" title="Debug: Preview captured data">DBG</button>
+<div id="debug-panel" onclick="if(event.target===this)closeDebugPanel()">
+  <div id="debug-content"></div>
+</div>
+
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const likertS1 = [
@@ -1024,15 +1070,15 @@ const journals = [
 ];
 
 const contactFields = [
-  { label:"Mention or specify the position <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Director of Curriculum, MoE" },
-  { label:"Organisation <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Ministry of Education, Skills and Development" },
-  { label:"Department / Division / Unit <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Curriculum and Professional Support Division" },
-  { label:"How often did you contact them? <span class='required-star'>*</span>", type:"select", options:["Weekly","Monthly","Few times a year","Once a year"] },
-  { label:"How important is this contact to your work? <span class='required-star'>*</span>", type:"select", options:["Extremely","Very","Moderately","Somewhat","Not very"] },
-  { label:"Nature of relationship <span class='required-star'>*</span>", type:"select", options:["Formal — official or institutional channel","Informal — personal or social connection","Committee — through a joint committee or working group","Introduced — connected through a third party","Former Colleague — previously worked together"] },
-  { label:"What did you exchange? <span class='required-star'>*</span>", type:"text", placeholder:"e.g. Research, Policy docs, Data, Advice…" },
-  { label:"Does this person contact you back? <span class='required-star'>*</span>", type:"select", options:["Yes, always","Yes, sometimes","Rarely","Never"] },
-  { label:"Would this person name you as one of their contacts? <span class='required-star'>*</span>", type:"select", options:["Yes","Probably","Unlikely","No"] },
+  { label:"Mention or specify the position", type:"text", placeholder:"e.g. Director of Curriculum, MoE" },
+  { label:"Organisation", type:"text", placeholder:"e.g. Ministry of Education, Skills and Development" },
+  { label:"Department / Division / Unit", type:"text", placeholder:"e.g. Curriculum and Professional Support Division" },
+  { label:"How often did you contact them?", type:"select", options:["Weekly","Monthly","Few times a year","Once a year"] },
+  { label:"How important is this contact to your work?", type:"select", options:["Extremely","Very","Moderately","Somewhat","Not very"] },
+  { label:"Nature of relationship, you approached this contact because of:", type:"select", options:["Formal — official or institutional channel","Informal — personal or social connection","Committee — through a joint committee or working group","Introduced — connected through a third party","Former Colleague — previously worked together"] },
+  { label:"What did you exchange?", type:"text", placeholder:"e.g. Research, Policy docs, Data, Advice…" },
+  { label:"Does this person contact you back?", type:"select", options:["Yes, always","Yes, sometimes","Rarely","Never"] },
+  { label:"Would this person name you as one of their contacts?", type:"select", options:["Yes","Probably","Unlikely","No"] },
 ];
 
 const introFields = [
@@ -1119,9 +1165,9 @@ function buildContacts() {
     contactFields.forEach((f, fi) => {
       html += `<div><label class="block text-sm mb-1">${f.label}</label>`;
       if (f.type === 'select') {
-        html += `<select class="form-input" required><option value="">— Select —</option>${f.options.map(o=>`<option>${o}</option>`).join('')}</select>`;
+        html += `<select class="form-input"><option value="">— Select —</option>${f.options.map(o=>`<option>${o}</option>`).join('')}</select>`;
       } else {
-        html += `<input type="text" class="form-input" placeholder="${f.placeholder}" required/>`;
+        html += `<input type="text" class="form-input" placeholder="${f.placeholder}"/>`;
       }
       html += `</div>`;
     });
@@ -1249,10 +1295,31 @@ function toggleIntroductions() {
     container.style.display = 'block';
   } else {
     container.style.display = 'none';
-    // Clear any filled introduction data so validation doesn't block
     container.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
     container.querySelectorAll('input[type="text"]').forEach(t => t.value = '');
   }
+}
+
+// Dynamic add for missing connections
+let missingCount = 3;
+function addMissingConnection() {
+  missingCount++;
+  const container = document.getElementById('missing-connections-container');
+  const div = document.createElement('div');
+  div.className = 'missing-card p-4 rounded';
+  div.style.cssText = 'background:var(--bhutan-warm);border:1px solid var(--bhutan-border);';
+  div.innerHTML = `
+    <p class="font-semibold mb-2 text-sm mono" style="color:var(--bhutan-gold);">Missing Connection ${missingCount}</p>
+    <label class="block text-sm mb-1">Name of position and organisation</label>
+    <input type="text" class="form-input mb-3" placeholder="e.g. Position, Organisation"/>
+    <label class="block text-sm mb-1">If this connection existed, how often do you think you would interact?</label>
+    <select class="form-input">
+      <option value="">— Select —</option>
+      <option>Weekly</option><option>Monthly</option>
+      <option>Few times in a year</option><option>Once a year</option>
+    </select>`;
+  container.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // Map org radio values to collabOrgs labels for auto-skipping
@@ -1340,18 +1407,45 @@ function validateAndGo(from, to) {
   const existingBanner = page.querySelector('.validation-banner');
   if (existingBanner) existingBanner.classList.remove('show');
 
+  // Pages 3 (contacts) and 4 (introductions/brokerage) are entirely optional
+  if (from === 3 || from === 4) {
+    goToPage(to);
+    return;
+  }
+
   let errors = [];
 
-  // Determine which elements to skip in validation
-  const introNo = page.querySelector('input[name="intro_yn"][value="No"]:checked');
-  const introContainer = page.querySelector('#introductions-container');
+  // Page 5: Q13 (missing connections) is optional, but Q14 (barriers) is mandatory
+  if (from === 5) {
+    // Check that at least one Q14 checkbox is selected
+    const q14Checks = page.querySelectorAll('#page-5 input.custom-check');
+    const anyChecked = Array.from(q14Checks).some(cb => cb.checked);
+    if (!anyChecked) {
+      // Find Q14 container and flag it
+      const q14Container = q14Checks[0]?.closest('div');
+      if (q14Container) errors.push(q14Container);
+
+      let banner = page.querySelector('.validation-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.className = 'validation-banner';
+        banner.textContent = 'Please select at least one barrier in Q14 before continuing.';
+        const card = page.querySelector('.section-card');
+        if (card) card.insertBefore(banner, card.firstChild);
+      }
+      banner.classList.add('show');
+      errors[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    goToPage(to);
+    return;
+  }
+
   const respondentOrg = getRespondentOrgType();
 
   // 1. Check all radio groups — at least one must be selected per group
   const radioGroups = {};
   page.querySelectorAll('input[type="radio"][name]').forEach(r => {
-    // Skip radio buttons inside hidden introductions container
-    if (introNo && introContainer && introContainer.contains(r)) return;
     // Skip own-org collab/relship radio groups
     if (respondentOrg) {
       const orgIndex = collabOrgs.indexOf(respondentOrg);
@@ -1372,17 +1466,15 @@ function validateAndGo(from, to) {
     }
   }
 
-  // 2. Check required text inputs and selects (skip hidden ones)
+  // 2. Check required text inputs and selects
   page.querySelectorAll('input[required], select[required]').forEach(el => {
-    if (introNo && introContainer && introContainer.contains(el)) return;
     if (!el.value || el.value.trim() === '') {
       errors.push(el);
     }
   });
 
-  // 3. Check required textareas (skip hidden ones)
+  // 3. Check required textareas
   page.querySelectorAll('textarea[required]').forEach(el => {
-    if (introNo && introContainer && introContainer.contains(el)) return;
     if (!el.value || el.value.trim() === '') {
       errors.push(el);
     }
@@ -1559,6 +1651,10 @@ function collectAllData() {
     });
   });
 
+  // Q10 no-contact reasons
+  const q10Reasons = document.getElementById('q10_reasons');
+  d['Q10_No_Contact_Reasons'] = q10Reasons ? q10Reasons.value : '';
+
   // ─── PART 4: Introductions ───
   d['Q11_Introduced_YN'] = radio('intro_yn');
   const introCards = document.querySelectorAll('#introductions-container > div');
@@ -1568,6 +1664,9 @@ function collectAllData() {
     d[`Q11_Intro${ii+1}_Introduced_To`] = txtInputs[1] ? txtInputs[1].value : '';
     d[`Q11_Intro${ii+1}_Helpfulness`] = radio(`intro_help_${ii+1}`);
   });
+  // Q11 no-intro reasons
+  const q11Reasons = document.getElementById('q11_reasons');
+  d['Q11_No_Intro_Reasons'] = q11Reasons ? q11Reasons.value : '';
 
   // Brokerage
   d['Q12_Connect_People_Frequency'] = radio('broker_freq');
@@ -1582,15 +1681,18 @@ function collectAllData() {
   const brokerOtherInput = document.querySelector('#page-4 input[placeholder="Please specify"]');
   d['Q12_Connect_Other_Specify'] = brokerOtherInput ? brokerOtherInput.value : '';
   d['Q12_Bridge_Role'] = radio('bridge_role');
-  const bridgeTextarea = document.querySelector('#page-4 textarea');
+  // Get the bridge description textarea (the last textarea on page 4, after the brokerage section)
+  const page4Textareas = document.querySelectorAll('#page-4 textarea');
+  // q11_reasons is first, bridge description is the second textarea
+  const bridgeTextarea = page4Textareas.length >= 2 ? page4Textareas[1] : null;
   d['Q12_Bridge_Description'] = bridgeTextarea ? bridgeTextarea.value : '';
 
   // ─── PART 5: Missing Connections ───
   d['Q13_Missing_YN'] = radio('missing_yn');
-  const missingBlocks = document.querySelectorAll('#page-5 .space-y-5 > div');
-  missingBlocks.forEach((block, mi) => {
-    const inp = block.querySelector('input.form-input');
-    const sel = block.querySelector('select.form-input');
+  const missingCards = document.querySelectorAll('#missing-connections-container > .missing-card');
+  missingCards.forEach((card, mi) => {
+    const inp = card.querySelector('input.form-input');
+    const sel = card.querySelector('select.form-input');
     d[`Q13_Missing${mi+1}_Position_Org`] = inp ? inp.value : '';
     d[`Q13_Missing${mi+1}_Expected_Frequency`] = sel ? sel.value : '';
   });
@@ -1739,6 +1841,65 @@ function showCompletion() {
   document.getElementById('progress-bar').style.width = '100%';
   document.getElementById('progress-text').textContent = '✓ Complete';
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── DEBUG MODE ──────────────────────────────────────────────────────────────
+function openDebugPanel() {
+  const data = collectAllData();
+  const keys = Object.keys(data);
+  const filled = keys.filter(k => data[k] !== '' && data[k] !== undefined && data[k] !== null);
+  const empty = keys.filter(k => data[k] === '' || data[k] === undefined || data[k] === null);
+  const onValues = keys.filter(k => data[k] === 'on');
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <h3 style="margin:0;">Data Preview (not submitted)</h3>
+    <button onclick="closeDebugPanel()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+  </div>`;
+
+  html += `<div class="debug-stats">
+    <strong>Total fields:</strong> ${keys.length} &nbsp;|&nbsp;
+    <strong style="color:var(--accent-teal);">Filled:</strong> ${filled.length} &nbsp;|&nbsp;
+    <strong style="color:#ccc;">Empty:</strong> ${empty.length} &nbsp;|&nbsp;
+    <strong style="color:var(--bhutan-orange);">⚠ "on" values:</strong> ${onValues.length}
+    ${onValues.length > 0 ? '<br><span style="color:var(--bhutan-orange);font-size:0.7rem;">⚠ "on" means the radio has no value attribute — needs fixing</span>' : ''}
+  </div>`;
+
+  html += `<div class="debug-filter">
+    <button class="active" onclick="filterDebug('all',this)">All (${keys.length})</button>
+    <button onclick="filterDebug('filled',this)">Filled (${filled.length})</button>
+    <button onclick="filterDebug('empty',this)">Empty (${empty.length})</button>
+    ${onValues.length > 0 ? `<button onclick="filterDebug('on',this)">⚠ "on" (${onValues.length})</button>` : ''}
+  </div>`;
+
+  html += '<div id="debug-rows">';
+  keys.forEach(k => {
+    const val = data[k];
+    const isEmpty = val === '' || val === undefined || val === null;
+    const isOn = val === 'on';
+    const cls = isOn ? 'debug-on-value' : (isEmpty ? 'debug-empty' : 'debug-has-data');
+    const filterCls = isOn ? 'on' : (isEmpty ? 'empty' : 'filled');
+    html += `<div class="debug-row" data-filter="${filterCls}">
+      <div class="debug-col">${k}</div>
+      <div class="debug-val ${cls}">${isEmpty ? '(empty)' : (isOn ? '⚠ on' : val)}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('debug-content').innerHTML = html;
+  document.getElementById('debug-panel').classList.add('show');
+}
+
+function closeDebugPanel() {
+  document.getElementById('debug-panel').classList.remove('show');
+}
+
+function filterDebug(type, btn) {
+  document.querySelectorAll('.debug-filter button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#debug-rows .debug-row').forEach(row => {
+    if (type === 'all') { row.style.display = ''; return; }
+    row.style.display = row.dataset.filter === type ? '' : 'none';
+  });
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
